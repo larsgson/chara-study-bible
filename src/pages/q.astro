@@ -1,9 +1,11 @@
 ---
 import BaseLayout from "../layouts/BaseLayout.astro";
-
+import SearchResults from "../components/SearchResults";
+// Note: query params are handled client
 const q = Astro.url.searchParams.get("q")?.trim() ?? "";
-const mode =
-    Astro.url.searchParams.get("mode") === "premium" ? "Premium" : "Free";
+const modeParam = Astro.url.searchParams.get("mode");
+const mode = modeParam === "premium" ? "premium" : "free";
+const modeLabel = mode === "premium" ? "Premium" : "Free";
 ---
 
 <BaseLayout
@@ -13,19 +15,9 @@ const mode =
 >
     <main class="page">
         <h1 class="title">{q ? `Search: "${q}"` : "Search"}</h1>
-        <p class="mode-badge">{mode} Search</p>
+        <p class="mode-badge">{modeLabel} Search</p>
 
-        <p class="muted">
-            Search runs on the API backend. The frontend is wired up; once the
-            backend is reachable (set <code>PUBLIC_API_BASE_URL</code>), results
-            will appear here.
-        </p>
-
-        <p class="muted">
-            In the meantime, the BSB reader and Strong's lookups are fully
-            functional locally —
-            <a href="/" class="link">pick a passage</a>.
-        </p>
+        <SearchResults client:load query={q} mode={mode} />
     </main>
 </BaseLayout>
 

@@ -11,8 +11,8 @@
   publish = "dist"
 
 [build.environment]
-  # Node 20 LTS; pnpm version comes from packageManager in package.json.
-  NODE_VERSION = "20"
+  # Node 22 for Astro 6; pnpm version comes from packageManager in package.json.
+  NODE_VERSION = "22"
 
 # Path-style verse permalinks → query-string form (301 at the edge, no
 # compute cost). Preserves shareable / bookmarked URLs of the form
