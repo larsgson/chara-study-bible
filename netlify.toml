@@ -22,3 +22,10 @@
   from = "/bible/:book/:chapter/:verse"
   to = "/bible/:book/:chapter?v=:verse"
   status = 301
+
+# Catch-all for unimplemented routes (API-backed features)
+# Shows 404 page explaining these require the backend
+[[redirects]]
+  from = "/*"
+  to = "/404.html"
+  status = 404
