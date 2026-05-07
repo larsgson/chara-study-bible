@@ -1,6 +1,8 @@
 // Mock search results component for UI development
 // Returns randomized mock data matching the API response structure
 
+import { useState, useEffect } from "react";
+
 interface SearchHit {
   chunk_id: string;
   score: number;
@@ -128,14 +130,32 @@ export default function SearchResults({
   query: _query,
   mode: _mode,
 }: SearchResultsProps) {
-  // Read from URL on client side (Astro SSG can't access runtime params)
-  const urlParams =
-    typeof window !== "undefined"
-      ? new URLSearchParams(window.location.search)
-      : null;
-  const query = urlParams?.get("q")?.trim() || _query || "";
-  const modeParam = urlParams?.get("mode");
-  const mode = modeParam === "premium" ? "premium" : _mode || "free";
+  // Use state to prevent hydration mismatch
+  const [query, setQuery] = useState("");
+  const [mode, setMode] = useState<"free" | "premium">("free");
+  const [mounted, setMounted] = useState(false);
+
+  useEffect(() => {
+    // Read from URL on client side only
+    const urlParams = new URLSearchParams(window.location.search);
+    const urlQuery = urlParams.get("q")?.trim() || "";
+    const urlMode = urlParams.get("mode");
+
+    setQuery(urlQuery);
+    setMode(urlMode === "premium" ? "premium" : "free");
+    setMounted(true);
+  }, []);
+
+  // Show loading state during hydration
+  if (!mounted) {
+    return (
+      <div style={{ padding: "1rem" }}>
+        <p style={{ color: "var(--color-text-muted)", fontSize: "14px" }}>
+          Loading...
+        </p>
+      </div>
+    );
+  }
 
   if (!query) {
     return (

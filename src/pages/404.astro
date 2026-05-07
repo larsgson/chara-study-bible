@@ -87,7 +87,9 @@ import BaseLayout from "../layouts/BaseLayout.astro";
                 );
                 console.log("404 page: referrer search:", referrerUrl.search);
 
-                if (referrerUrl.pathname === "/q" && referrerUrl.search) {
+                // Handle both /q and /q/ (trailing slash)
+                const pathname = referrerUrl.pathname.replace(/\/$/, "");
+                if (pathname === "/q" && referrerUrl.search) {
                     // User came from search, preserve the query params
                     const newHref = "/q" + referrerUrl.search;
                     searchLink.href = newHref;
