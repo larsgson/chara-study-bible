@@ -71,19 +71,39 @@ import BaseLayout from "../layouts/BaseLayout.astro";
     </main>
 </BaseLayout>
 
-<script>
+<script is:inline>
     // Preserve search context from referrer
-    const searchLink = document.getElementById("search-link");
-    if (searchLink && document.referrer) {
-        try {
-            const referrerUrl = new URL(document.referrer);
-            if (referrerUrl.pathname === "/q" && referrerUrl.search) {
-                // User came from search, preserve the query params
-                searchLink.href = "/q" + referrerUrl.search;
+    function updateSearchLink() {
+        const searchLink = document.getElementById("search-link");
+        console.log("404 page: searchLink element:", searchLink);
+        console.log("404 page: referrer:", document.referrer);
+
+        if (searchLink && document.referrer) {
+            try {
+                const referrerUrl = new URL(document.referrer);
+                console.log(
+                    "404 page: referrer pathname:",
+                    referrerUrl.pathname,
+                );
+                console.log("404 page: referrer search:", referrerUrl.search);
+
+                if (referrerUrl.pathname === "/q" && referrerUrl.search) {
+                    // User came from search, preserve the query params
+                    const newHref = "/q" + referrerUrl.search;
+                    searchLink.href = newHref;
+                    console.log("404 page: updated search link to:", newHref);
+                }
+            } catch (e) {
+                console.error("404 page: error parsing referrer:", e);
             }
-        } catch (e) {
-            // Invalid referrer URL, keep default
         }
+    }
+
+    // Run immediately and also on DOMContentLoaded to be safe
+    if (document.readyState === "loading") {
+        document.addEventListener("DOMContentLoaded", updateSearchLink);
+    } else {
+        updateSearchLink();
     }
 </script>
 
