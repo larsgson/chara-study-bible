@@ -75,28 +75,17 @@ import BaseLayout from "../layouts/BaseLayout.astro";
     // Preserve search context from referrer
     function updateSearchLink() {
         const searchLink = document.getElementById("search-link");
-        console.log("404 page: searchLink element:", searchLink);
-        console.log("404 page: referrer:", document.referrer);
-
         if (searchLink && document.referrer) {
             try {
                 const referrerUrl = new URL(document.referrer);
-                console.log(
-                    "404 page: referrer pathname:",
-                    referrerUrl.pathname,
-                );
-                console.log("404 page: referrer search:", referrerUrl.search);
-
                 // Handle both /q and /q/ (trailing slash)
                 const pathname = referrerUrl.pathname.replace(/\/$/, "");
                 if (pathname === "/q" && referrerUrl.search) {
                     // User came from search, preserve the query params
-                    const newHref = "/q" + referrerUrl.search;
-                    searchLink.href = newHref;
-                    console.log("404 page: updated search link to:", newHref);
+                    searchLink.href = "/q" + referrerUrl.search;
                 }
             } catch (e) {
-                console.error("404 page: error parsing referrer:", e);
+                // Invalid referrer URL, keep default
             }
         }
     }
