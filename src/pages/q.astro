@@ -14,12 +14,59 @@ const modeLabel = mode === "premium" ? "Premium" : "Free";
         : "Search — Chara Study Bible"}
 >
     <main class="page">
-        <h1 class="title">{q ? `Search: "${q}"` : "Search"}</h1>
-        <p class="mode-badge">{modeLabel} Search</p>
+        <div class="header-row">
+            <div>
+                <h1 class="title">{q ? `Search: "${q}"` : "Search"}</h1>
+                <p class="mode-badge">{modeLabel} Search</p>
+            </div>
+            <div id="clear-button-container"></div>
+        </div>
 
         <SearchResults client:load query={q} mode={mode} />
     </main>
 </BaseLayout>
+
+<script>
+    // Store search context in sessionStorage for navigation back
+    const urlParams = new URLSearchParams(window.location.search);
+    const query = urlParams.get("q");
+    const mode = urlParams.get("mode");
+
+    if (query) {
+        sessionStorage.setItem("lastSearch", window.location.search);
+
+        // Add clear search button
+        const container = document.getElementById("clear-button-container");
+        if (container) {
+            const clearBtn = document.createElement("button");
+            clearBtn.id = "clear-search";
+            clearBtn.className = "clear-btn";
+            clearBtn.title = "Clear search";
+            clearBtn.innerHTML = `
+                <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    width="20"
+                    height="20"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="2"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                >
+                    <path d="M3 6h18"></path>
+                    <path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6"></path>
+                    <path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"></path>
+                </svg>
+            `;
+            clearBtn.addEventListener("click", () => {
+                sessionStorage.removeItem("lastSearch");
+                window.location.href = "/q";
+            });
+            container.appendChild(clearBtn);
+        }
+    }
+</script>
 
 <style>
     .page {
@@ -34,6 +81,12 @@ const modeLabel = mode === "premium" ? "Premium" : "Free";
         font-weight: 600;
         color: var(--color-text);
     }
+    .header-row {
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-start;
+        margin-bottom: 1rem;
+    }
     .mode-badge {
         display: inline-block;
         margin: 0 0 0.75rem;
@@ -43,6 +96,20 @@ const modeLabel = mode === "premium" ? "Premium" : "Free";
         color: var(--color-primary);
         background: var(--color-primary-light);
         border-radius: 6px;
+    }
+    .clear-btn {
+        padding: 0.5rem;
+        background: var(--color-background);
+        border: 1px solid var(--color-border);
+        border-radius: 8px;
+        cursor: pointer;
+        color: var(--color-text-muted);
+        transition: all 0.2s;
+    }
+    .clear-btn:hover {
+        border-color: var(--color-accent);
+        color: var(--color-accent);
+        background: var(--color-background-alt);
     }
     .muted {
         margin: 0 0 0.75rem;

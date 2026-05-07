@@ -252,7 +252,7 @@ export default function SearchResults({
                 href={hit.permalink}
                 className="hover:text-[var(--color-primary)] hover:underline"
               >
-                View chunk →
+                view
               </a>
             </div>
           </article>

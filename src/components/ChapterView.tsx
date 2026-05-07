@@ -84,10 +84,13 @@ export default function ChapterView({
   // Display state — pre-hydration default; URL/localStorage applied after mount.
   const [displayMode, setDisplayMode] = useState<DisplayMode>("txt");
   const [hydrated, setHydrated] = useState(false);
+  const [hasSearchContext, setHasSearchContext] = useState(false);
 
   useEffect(() => {
     setDisplayMode(readInitialMode());
     setHydrated(true);
+    // Check if there's a stored search context
+    setHasSearchContext(!!sessionStorage.getItem("lastSearch"));
   }, []);
 
   // Lexicon state
@@ -496,18 +499,28 @@ export default function ChapterView({
           </span>
         )}
 
-        {/* Display mode toggle — txt ↔ il+ */}
-        <button
-          className={`px-3 py-1.5 rounded-2xl text-[13px] font-medium border cursor-pointer transition-all tracking-wide ${
-            displayMode === "il+"
-              ? "bg-[var(--color-primary-light)] text-[var(--color-primary)] border-[var(--color-primary)]"
-              : "bg-[var(--color-background-alt)] text-[var(--color-secondary)] border-[var(--color-border)]"
-          }`}
-          onClick={toggleMode}
-          title={`Mode: ${displayMode}. Tap to switch.`}
-        >
-          {displayMode === "il+" ? "Interlinear" : "Text"}
-        </button>
+        {/* Back to Search or Display mode toggle */}
+        {hasSearchContext ? (
+          <a
+            href={`/q${sessionStorage.getItem("lastSearch")}`}
+            className="px-3 py-1.5 rounded-2xl text-[13px] font-medium border bg-[var(--color-background-alt)] text-[var(--color-secondary)] border-[var(--color-border)] no-underline hover:border-[var(--color-primary)] hover:text-[var(--color-primary)] transition-all"
+            title="Return to search results"
+          >
+            ← Search
+          </a>
+        ) : (
+          <button
+            className={`px-3 py-1.5 rounded-2xl text-[13px] font-medium border cursor-pointer transition-all tracking-wide ${
+              displayMode === "il+"
+                ? "bg-[var(--color-primary-light)] text-[var(--color-primary)] border-[var(--color-primary)]"
+                : "bg-[var(--color-background-alt)] text-[var(--color-secondary)] border-[var(--color-border)]"
+            }`}
+            onClick={toggleMode}
+            title={`Mode: ${displayMode}. Tap to switch.`}
+          >
+            {displayMode === "il+" ? "Interlinear" : "Text"}
+          </button>
+        )}
 
         {/* Chapter position */}
         <span className="text-xs text-[var(--color-text-muted)]">
