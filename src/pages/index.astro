@@ -1,0 +1,16 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro'
+import PassageSelectorPage from '../components/PassageSelectorPage'
+---
+
+<BaseLayout title="Chara Study Bible">
+  <div id="root">
+    <PassageSelectorPage client:load />
+  </div>
+</BaseLayout>
+
+<style>
+  #root {
+    height: 100%;
+  }
+</style>

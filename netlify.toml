@@ -1,0 +1,24 @@
+# Netlify config for chara-study-bible
+#
+# Frontend is fully-static (Astro SSG). No adapter, no Functions, no SSR.
+# Set the runtime env vars in the Netlify dashboard:
+#   PUBLIC_API_BASE_URL  — backend origin for lib/api/* (required for API features)
+#   PUBLIC_API_PASSWORD  — Bearer token for /ask + ?semantic=true (required for RAG)
+# Without those, the local BSB reader still works; API features fail gracefully.
+
+[build]
+  command = "pnpm build"
+  publish = "dist"
+
+[build.environment]
+  # Node 20 LTS; pnpm version comes from packageManager in package.json.
+  NODE_VERSION = "20"
+
+# Path-style verse permalinks → query-string form (301 at the edge, no
+# compute cost). Preserves shareable / bookmarked URLs of the form
+#   /bible/jhn/3/16  →  /bible/jhn/3?v=16
+# The chapter page reads `?v=` on mount and enters focus mode for that verse.
+[[redirects]]
+  from = "/bible/:book/:chapter/:verse"
+  to = "/bible/:book/:chapter?v=:verse"
+  status = 301

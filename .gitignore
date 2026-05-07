@@ -1,0 +1,49 @@
+# Dependencies
+node_modules/
+
+# Build output
+dist/
+.astro/
+.vite/
+
+# Environment
+.env
+.env.local
+.env.*.local
+
+# IDE
+.vscode/
+.idea/
+
+# Claude Code
+.claude/
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log
+npm-debug.log*
+pnpm-debug.log*
+
+# Lock files (use pnpm-lock.yaml)
+package-lock.json
+yarn.lock
+
+# TypeScript cache
+*.tsbuildinfo
+
+# Local config
+config.js
+config.ts
+
+# Data files are now committed for Netlify builds
+# (originally excluded but needed for static site generation)
+
+# Previous implementation (reference only)
+prev/
+
+# helpful external documentation only
+example/
+docs/

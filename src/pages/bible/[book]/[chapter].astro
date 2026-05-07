@@ -1,0 +1,68 @@
+---
+import BaseLayout from "../../../layouts/BaseLayout.astro";
+import ChapterView from "../../../components/ChapterView";
+import { loadChapter, getAllChapterPaths } from "../../../lib/local/chapter";
+import books from "../../../data/books";
+
+export function getStaticPaths() {
+    return getAllChapterPaths().map(({ bookId, bookCode, chapter }) => ({
+        params: {
+            book: bookCode.toLowerCase(),
+            chapter: String(chapter),
+        },
+        props: { bookId, chapterNumber: chapter },
+    }));
+}
+
+interface Props {
+    bookId: number;
+    chapterNumber: number;
+}
+
+const { bookId, chapterNumber } = Astro.props;
+const data = loadChapter(bookId, chapterNumber);
+
+const book = books.find((b) => b.id === bookId)!;
+let prevLink: string | null = null;
+let nextLink: string | null = null;
+
+if (chapterNumber > 1) {
+    prevLink = `/bible/${book.code.toLowerCase()}/${chapterNumber - 1}`;
+} else if (bookId > 1) {
+    const prevBook = books.find((b) => b.id === bookId - 1)!;
+    prevLink = `/bible/${prevBook.code.toLowerCase()}/${prevBook.chapters}`;
+}
+
+if (chapterNumber < book.chapters) {
+    nextLink = `/bible/${book.code.toLowerCase()}/${chapterNumber + 1}`;
+} else if (bookId < 66) {
+    const nextBook = books.find((b) => b.id === bookId + 1)!;
+    nextLink = `/bible/${nextBook.code.toLowerCase()}/1`;
+}
+---
+
+<BaseLayout
+    title={`${data.bookName} ${data.chapterNumber} — Chara Study Bible`}
+>
+    <div id="root">
+        <ChapterView
+            client:load
+            verses={data.verses}
+            headings={data.headings}
+            indexEntries={data.indexEntries}
+            bookId={data.bookId}
+            bookName={data.bookName}
+            bookCode={data.bookCode}
+            chapterNumber={data.chapterNumber}
+            totalChapters={data.totalChapters}
+            prevLink={prevLink}
+            nextLink={nextLink}
+        />
+    </div>
+</BaseLayout>
+
+<style>
+    #root {
+        height: 100%;
+    }
+</style>
