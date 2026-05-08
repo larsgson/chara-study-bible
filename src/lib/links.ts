@@ -16,7 +16,7 @@ export function localizeApiPath(path: string): string {
   if (!m) return path
   const [, book, chapter, verse] = m
   const local = `/bible/${book.toLowerCase()}/${chapter}`
-  return verse ? `${local}?v=${verse}` : local
+  return verse ? `${local}?highlight=${verse}#v${verse}` : local
 }
 
 /**

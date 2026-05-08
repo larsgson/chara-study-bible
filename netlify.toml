@@ -13,6 +13,9 @@
 [build.environment]
   # Node 22 for Astro 6; pnpm version comes from packageManager in package.json.
   NODE_VERSION = "22"
+  # Backend origin baked into the JS bundle at build time. Public anyway, so
+  # checking it in is fine. Override per-deploy via Netlify env vars if needed.
+  PUBLIC_API_BASE_URL = "https://bt-docker-mcp-production.up.railway.app"
 
 # Path-style verse permalinks → query-string form (301 at the edge, no
 # compute cost). Preserves shareable / bookmarked URLs of the form

@@ -27,3 +27,13 @@ body {
 #root {
   height: 100%;
 }
+
+/* Verse highlight — applied when arriving from a search result via
+ * /bible/<book>/<chapter>?highlight=<verse>#v<verse>. */
+.search-verse-highlight {
+  background: #fff3a3;
+  border-left: 3px solid #f0c040;
+  margin-left: -8px;
+  padding: 4px 4px 4px 8px;
+  border-radius: 4px;
+}

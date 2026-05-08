@@ -49,9 +49,13 @@ function migrateDisplayMode(stored: string | null | undefined): DisplayMode {
 }
 
 // E3: URL param wins, localStorage is the fallback, default is `txt`.
+// Exception: if the URL carries `?highlight=<n>` (arrived from a search
+// result), we force `txt` so the user lands in plain reading mode.
 function readInitialMode(): DisplayMode {
   if (typeof window === "undefined") return "txt";
-  const fromUrl = new URLSearchParams(window.location.search).get("m");
+  const params = new URLSearchParams(window.location.search);
+  if (params.get("highlight")) return "txt";
+  const fromUrl = params.get("m");
   if (fromUrl) return migrateDisplayMode(fromUrl);
   return migrateDisplayMode(getStoredValue<string>("bsb-displayMode", "txt"));
 }
@@ -85,12 +89,17 @@ export default function ChapterView({
   const [displayMode, setDisplayMode] = useState<DisplayMode>("txt");
   const [hydrated, setHydrated] = useState(false);
   const [hasSearchContext, setHasSearchContext] = useState(false);
+  const [highlightedVerse, setHighlightedVerse] = useState<number | null>(null);
 
   useEffect(() => {
     setDisplayMode(readInitialMode());
     setHydrated(true);
-    // Check if there's a stored search context
     setHasSearchContext(!!sessionStorage.getItem("lastSearch"));
+    const h = parseInt(
+      new URLSearchParams(window.location.search).get("highlight") ?? "",
+      10,
+    );
+    if (!isNaN(h) && h > 0) setHighlightedVerse(h);
   }, []);
 
   // Lexicon state
@@ -458,7 +467,13 @@ export default function ChapterView({
         onTouchEnd={handleTouchEnd}
       >
         {verses.map((verse) => (
-          <div key={verse.v} id={`v${verse.v}`}>
+          <div
+            key={verse.v}
+            id={`v${verse.v}`}
+            className={
+              verse.v === highlightedVerse ? "search-verse-highlight" : ""
+            }
+          >
             {headings
               .filter((h) => h.before_v === verse.v)
               .map((heading) => (
