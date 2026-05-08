@@ -1,12 +1,8 @@
 ---
 // Global header — persistent on every page.
 // Logo (home link) + search input that submits to /q.
-const initialQuery =
-    Astro.url?.pathname === "/q" ? (Astro.url.searchParams.get("q") ?? "") : "";
-const initialMode =
-    Astro.url?.pathname === "/q"
-        ? (Astro.url.searchParams.get("mode") ?? "free")
-        : "free";
+const initialQuery = Astro.url?.searchParams.get("q") ?? "";
+const initialMode = Astro.url?.searchParams.get("mode") ?? "free";
 ---
 
 <header class="app-header">
@@ -269,23 +265,25 @@ const initialMode =
     }
 </style>
 
-<script>
-    const toggle = document.getElementById("mode-toggle") as HTMLInputElement;
-    const modal = document.getElementById("password-modal") as HTMLElement;
-    const passwordInput = document.getElementById(
-        "password-input",
-    ) as HTMLInputElement;
-    const passwordSubmit = document.getElementById(
-        "password-submit",
-    ) as HTMLButtonElement;
-    const passwordCancel = document.getElementById(
-        "password-cancel",
-    ) as HTMLButtonElement;
-    const searchForm = document.getElementById(
-        "search-form",
-    ) as HTMLFormElement;
+<script is:inline>
+    const toggle = document.getElementById("mode-toggle");
+    const modal = document.getElementById("password-modal");
+    const passwordInput = document.getElementById("password-input");
+    const passwordSubmit = document.getElementById("password-submit");
+    const passwordCancel = document.getElementById("password-cancel");
+    const searchForm = document.getElementById("search-form");
 
     const STORAGE_KEY = "premium_password";
+    const MODE_KEY = "search_mode";
+
+    // Restore the toggle state from localStorage when the URL doesn't pin
+    // it explicitly (a /q?mode=… link should still win for shareability).
+    const urlMode = new URLSearchParams(window.location.search).get("mode");
+    if (urlMode === "premium" || urlMode === "free") {
+        toggle.checked = urlMode === "premium";
+    } else {
+        toggle.checked = localStorage.getItem(MODE_KEY) === "premium";
+    }
 
     toggle.addEventListener("change", function (e) {
         if (this.checked) {
@@ -294,8 +292,10 @@ const initialMode =
                 e.preventDefault();
                 modal.style.display = "flex";
                 passwordInput.focus();
+                return;
             }
         }
+        localStorage.setItem(MODE_KEY, this.checked ? "premium" : "free");
     });
 
     passwordSubmit.addEventListener("click", function () {
@@ -305,6 +305,7 @@ const initialMode =
             modal.style.display = "none";
             passwordInput.value = "";
             toggle.checked = true;
+            localStorage.setItem(MODE_KEY, "premium");
         } else {
             passwordInput.focus();
         }
@@ -314,6 +315,7 @@ const initialMode =
         modal.style.display = "none";
         passwordInput.value = "";
         toggle.checked = false;
+        localStorage.setItem(MODE_KEY, "free");
     });
 
     // Allow Enter key to submit password

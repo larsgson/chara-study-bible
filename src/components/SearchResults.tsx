@@ -42,7 +42,21 @@ export default function SearchResults({
     const urlParams = new URLSearchParams(window.location.search);
     const urlQuery = urlParams.get("q")?.trim() || "";
     const urlMode = urlParams.get("mode");
-    const resolvedMode = urlMode === "premium" ? "premium" : "free";
+    // URL wins; otherwise fall back to the persisted toggle state.
+    const resolvedMode: "free" | "premium" =
+      urlMode === "premium"
+        ? "premium"
+        : urlMode === "free"
+          ? "free"
+          : localStorage.getItem("search_mode") === "premium"
+            ? "premium"
+            : "free";
+    // Keep URL in sync with effective mode so reloads/shares match.
+    if (resolvedMode === "premium" && urlMode !== "premium") {
+      const u = new URL(window.location.href);
+      u.searchParams.set("mode", "premium");
+      window.history.replaceState({}, "", u.toString());
+    }
     setQuery(urlQuery);
     setMode(resolvedMode);
     if (resolvedMode === "premium") {
