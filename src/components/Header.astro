@@ -28,12 +28,6 @@ const initialMode =
                 value={initialQuery}
                 class="search-input"
             />
-            <input
-                type="hidden"
-                name="password"
-                id="premium-password"
-                value=""
-            />
             <div class="toggle-container">
                 <label class="toggle-switch">
                     <input
@@ -281,9 +275,6 @@ const initialMode =
     const passwordInput = document.getElementById(
         "password-input",
     ) as HTMLInputElement;
-    const passwordHidden = document.getElementById(
-        "premium-password",
-    ) as HTMLInputElement;
     const passwordSubmit = document.getElementById(
         "password-submit",
     ) as HTMLButtonElement;
@@ -296,37 +287,21 @@ const initialMode =
 
     const STORAGE_KEY = "premium_password";
 
-    // Check if password exists in session storage
-    const storedPassword = sessionStorage.getItem(STORAGE_KEY);
-    if (storedPassword) {
-        passwordHidden.value = storedPassword;
-    }
-
     toggle.addEventListener("change", function (e) {
         if (this.checked) {
-            // Switching to premium
             const password = sessionStorage.getItem(STORAGE_KEY);
             if (!password) {
-                // Show password modal
                 e.preventDefault();
                 modal.style.display = "flex";
                 passwordInput.focus();
-            } else {
-                // Password already exists, use it
-                passwordHidden.value = password;
             }
-        } else {
-            // Switching to free, clear password from form
-            passwordHidden.value = "";
         }
     });
 
     passwordSubmit.addEventListener("click", function () {
         const password = passwordInput.value.trim();
         if (password) {
-            // Store password in session storage
             sessionStorage.setItem(STORAGE_KEY, password);
-            passwordHidden.value = password;
             modal.style.display = "none";
             passwordInput.value = "";
             toggle.checked = true;
@@ -339,7 +314,6 @@ const initialMode =
         modal.style.display = "none";
         passwordInput.value = "";
         toggle.checked = false;
-        passwordHidden.value = "";
     });
 
     // Allow Enter key to submit password
@@ -357,13 +331,12 @@ const initialMode =
         }
     });
 
-    // Set password field on form submit if premium is selected
-    searchForm.addEventListener("submit", function () {
-        if (toggle.checked) {
-            const password = sessionStorage.getItem(STORAGE_KEY);
-            if (password) {
-                passwordHidden.value = password;
-            }
+    // Premium uses /api/ask (password-gated). Free uses /api/search (no auth).
+    searchForm.addEventListener("submit", function (e) {
+        if (toggle.checked && !sessionStorage.getItem(STORAGE_KEY)) {
+            e.preventDefault();
+            modal.style.display = "flex";
+            passwordInput.focus();
         }
     });
 </script>

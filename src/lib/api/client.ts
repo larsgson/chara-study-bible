@@ -26,14 +26,15 @@ export function isApiConfigured(): boolean {
 
 export async function apiFetch<T>(
   path: string,
-  init?: RequestInit & { authed?: boolean },
+  init?: RequestInit & { authed?: boolean; password?: string },
 ): Promise<T> {
   if (!API_BASE) throw new ApiNotConfiguredError()
 
   const headers = new Headers(init?.headers)
   headers.set('accept', 'application/json')
-  if (init?.authed && API_PASSWORD) {
-    headers.set('authorization', `Bearer ${API_PASSWORD}`)
+  if (init?.authed) {
+    const token = init.password ?? API_PASSWORD
+    if (token) headers.set('x-api-key', token)
   }
 
   let response: Response

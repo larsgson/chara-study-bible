@@ -6,14 +6,18 @@ export interface AskParams {
   question: string
   lang?: string
   scope?: { source?: string; book?: string | null }
+  /** Runtime bearer token, overrides PUBLIC_API_PASSWORD. */
+  password?: string
 }
 
 export function ask(params: AskParams): Promise<AskResponse> {
+  const { password, ...body } = params
   return apiFetch<AskResponse>(`/api/ask`, {
     method: 'POST',
     headers: { 'content-type': 'application/json' },
-    body: JSON.stringify(params),
+    body: JSON.stringify(body),
     authed: true,
+    password,
   })
 }
 
@@ -25,18 +29,23 @@ export interface AskStreamEvent {
 const API_BASE = (import.meta.env.PUBLIC_API_BASE_URL ?? '').replace(/\/$/, '')
 const API_PASSWORD = import.meta.env.PUBLIC_API_PASSWORD ?? ''
 
-export async function* askStream(params: AskParams): AsyncGenerator<AskStreamEvent> {
-  if (!API_BASE) throw new Error('API base URL is not configured (PUBLIC_API_BASE_URL).')
+export async function* askStream(
+  params: AskParams,
+): AsyncGenerator<AskStreamEvent> {
+  if (!API_BASE)
+    throw new Error('API base URL is not configured (PUBLIC_API_BASE_URL).')
+  const { password, ...body } = params
+  const token = password ?? API_PASSWORD
   const headers: Record<string, string> = {
     accept: 'text/event-stream',
     'content-type': 'application/json',
   }
-  if (API_PASSWORD) headers.authorization = `Bearer ${API_PASSWORD}`
+  if (token) headers['x-api-key'] = token
 
   const r = await fetch(`${API_BASE}/api/ask`, {
     method: 'POST',
     headers,
-    body: JSON.stringify(params),
+    body: JSON.stringify(body),
   })
   if (!r.ok || !r.body) throw new Error(`ask SSE: ${r.status}`)
   const reader = r.body.pipeThrough(new TextDecoderStream()).getReader()

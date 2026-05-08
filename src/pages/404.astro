@@ -5,59 +5,75 @@ import BaseLayout from "../layouts/BaseLayout.astro";
 <BaseLayout title="Page Not Found — Chara Study Bible">
     <main class="placeholder-page">
         <div class="content">
-            <h1 class="title">🚧 Coming Soon</h1>
+            <h1 class="title">Route not wired yet</h1>
 
             <div class="info-box">
-                <h2>This feature requires the API backend</h2>
+                <h2>Backend is live — this specific route is still pending</h2>
                 <p>
-                    This page is part of the API-backed study layer and will be
-                    available when the backend is connected.
+                    The API backend is connected and most study links work
+                    already. The path you followed points to a feature that
+                    isn't routed in this client yet.
                 </p>
             </div>
 
             <div class="details">
-                <h3>Common API-backed features:</h3>
+                <h3>Live now</h3>
                 <ul>
                     <li>
-                        <strong>Chunk permalinks</strong> (<code>/c/...</code>)
-                        — Full content view for study resource chunks
+                        <strong>BSB reader</strong> (<code>/bible/...</code>)
+                        — full Bible with Strong's, served from local data
                     </li>
                     <li>
-                        <strong>Tree navigation</strong> (<code>/en/...</code>)
-                        — Browse by topic, source, entity, or organization
+                        <strong>Search</strong> (<code>/q?q=…</code>)
+                        — hits via <code>/api/search</code>; Premium toggle
+                        runs RAG via <code>/api/ask</code>
                     </li>
                     <li>
-                        <strong>Entity profiles</strong> (<code
-                            >/entity/...</code
-                        >) — People, places, events with relationships
+                        <strong>Chunk permalinks</strong> (<code>/c/&lt;id&gt;</code>)
+                        — full chunk body, tags, tree paths, cross-refs
                     </li>
+                    <li>
+                        <strong>Tree views</strong> (<code>/en/&lt;tree&gt;/...</code>)
+                        for <code>scripture</code>, <code>source</code>,
+                        <code>kind</code>, <code>term</code>,
+                        <code>methodology</code>, <code>pericope</code>,
+                        <code>aquifer</code>
+                    </li>
+                </ul>
+
+                <h3>Not yet on the backend (stage-3 pending)</h3>
+                <ul>
                     <li>
                         <strong>Topic pages</strong> (<code>/topic/...</code>) —
-                        Thematic study with verse lists (Nave's)
+                        Nave's verse lists
                     </li>
                     <li>
-                        <strong>Lexicon entries</strong> (<code
-                            >/lexicon/...</code
-                        >) — Hebrew/Greek word studies
+                        <strong>Entity profiles</strong> (<code>/entity/...</code>)
+                        — people, places, events with relations and maps
                     </li>
                     <li>
-                        <strong>Pericope views</strong> (<code
-                            >/pericope/...</code
-                        >) — All resources for a passage range
+                        <strong>Cross-references</strong>
+                        (<code>/cross-references/...</code>) — TSK + parallel
+                    </li>
+                    <li>
+                        <strong>Concordance</strong>
+                        (<code>/concordance/&lt;word&gt;</code>) — every BSB
+                        verse for a word
+                    </li>
+                    <li>
+                        <strong>Lexicon / Morphology / Transcript trees</strong>
+                        (<code>/en/lexicon/...</code>,
+                        <code>/en/morphology/...</code>,
+                        <code>/en/transcript/...</code>)
                     </li>
                 </ul>
             </div>
 
             <div class="mock-note">
                 <p>
-                    <strong>Note:</strong> This is a placeholder for UI development.
-                    When connected to the API backend, these pages will display live
-                    data from Door43, BibleAquifer, BSB, and other resources.
-                </p>
-                <p>
-                    The backend provides hierarchical browsing,
-                    cross-references, topic lookups, entity graphs, search, and
-                    RAG-powered Q&A over the full study corpus.
+                    These will start working as soon as the backend ships the
+                    matching builders — the client is already wired against the
+                    same endpoint shapes.
                 </p>
             </div>
 

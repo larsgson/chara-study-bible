@@ -23,8 +23,24 @@
   to = "/bible/:book/:chapter?v=:verse"
   status = 301
 
-# Catch-all for unimplemented routes (API-backed features)
-# Shows 404 page explaining these require the backend
+# Chunk permalinks: /c/<chunk_id> → served by /c/index.html, which reads the
+# chunk_id from window.location.pathname and fetches /api/chunk/<id>.
+# Status 200 (rewrite) keeps the URL bar showing /c/<id> for shareability.
+[[redirects]]
+  from = "/c/*"
+  to = "/c/index.html"
+  status = 200
+
+# Tree-view paths: /en/<tree>/<...> → served by /en/index.html, which parses
+# the path and fetches /api/tree/<tree>/<...>.
+[[redirects]]
+  from = "/en/*"
+  to = "/en/index.html"
+  status = 200
+
+# Catch-all for unimplemented routes (API-backed features that aren't wired
+# yet, e.g. /topic/..., /entity/..., /concordance/...). The 404 page explains
+# which features are live and which are pending.
 [[redirects]]
   from = "/*"
   to = "/404.html"
